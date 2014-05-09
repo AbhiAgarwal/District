@@ -1,0 +1,24 @@
+{
+  "name": "physicalcomputing",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ordrin-api": "^1.0.1",
+    "express": "^4.1.1",
+    "grunt": "^0.4.4",
+    "grunt-jsonlint": "^1.0.4",
+    "grunt-jsbeautifier": "^0.2.7",
+    "jshint": "^2.5.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "nconf": "^0.6.9",
+    "ejs": "^1.0.0",
+    "duino": "0.0.9",
+    "serialport": "^1.4.0"
+  }
+}
