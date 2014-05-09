@@ -58,13 +58,12 @@ load();
 
 var io = require('socket.io').listen(server),
     SerialPort = require('serialport').SerialPort,
-    serialport = new SerialPort('/dev/tty.usbmodem1421');
+    serialport = new SerialPort('/dev/' + nconf.get('serialport'));
 
 serialport.on('open', function() {
     console.log('Serial Port Opend');
     serialport.on('data', function(data) {
-        if (data[0] === 1 || data[0] === 3) {
-            console.log(data[0]);
+        if (data[0] === 1 || data[0] === 3 || data[0] === 2) {
             io.sockets.emit('message', data[0]);
         }
     });

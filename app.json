@@ -4,5 +4,6 @@
     "datetime": "ASAP",
     "addr": "115 St Marks Place",
     "city": "New York",
-    "zip": "10009"
+    "zip": "10009",
+    "serialport": "tty.usbmodem1421"
 }
