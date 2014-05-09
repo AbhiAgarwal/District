@@ -1,22 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="District">
+    <meta name="author" content="Abhi Agarwal">
     <link rel="shortcut icon" href="./ico/favicon.ico">
-
     <title>District</title>
 
-    <!-- Bootstrap core CSS -->
     <link href="./stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="./stylesheets/carousel.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -24,127 +22,114 @@
     <![endif]-->
 
     <script src="/socket.io/socket.io.js"></script>
+</head>
 
-    <!-- Custom styles for this template -->
-    <link href="./stylesheets/carousel.css" rel="stylesheet">
-  </head>
-<!-- NAVBAR
-================================================== -->
-  <body>
+<body>
     <nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="#">Scan Card</a>
-        </li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-
-
-    <!-- Carousel
-    ================================================== -->
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <div class="carousel-inner" id = "carousel-inner">
-        <div class="item active">
-          <div class="container">
-            <div class="carousel-caption">
-              <h1 id="tochangehere"></h1>
-              <p id="tochangehere2"></p>
-              <p><a class="btn btn-lg btn-primary" id="orderTag" href="order/0" role="button" onclick="followHref()">Order</a></p>
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#">Scan Card</a>
+                    </li>
+                </ul>
             </div>
-          </div>
         </div>
-      </div>
-      <a class="left carousel-control" onclick="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>
-      <a class="right carousel-control" onclick="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </nav>
+
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" id="carousel-inner">
+            <div class="item active">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1 id="tochangehere"></h1>
+                        <p id="tochangehere2"></p>
+                        <p><a class="btn btn-lg btn-primary" id="orderTag" href="order/0" role="button" onclick="followHref()">Order</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="left carousel-control" onclick="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>
+        <a class="right carousel-control" onclick="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></a>
     </div>
 
-    </div><!-- /.container -->
+    </div>
 
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="/javascript/jquery.js"></script>
     <script src="./javascript/bootstrap.min.js"></script>
     <script src="./javascript/docs.min.js"></script>
     <script type="text/javascript">
-     var currentCount = 0;
-     var goNext = function () {
-         currentCount++;
-         nextAPI();
-     };
+        var currentCount = 0;
+        var goNext = function () {
+            currentCount++;
+            nextAPI();
+        };
 
-     var goPrevious = function () {
-         if (currentCount >= 0) {
-             currentCount--;
-             nextAPI();
-         };
-     };
+        var goPrevious = function () {
+            if (currentCount >= 0) {
+                currentCount--;
+                nextAPI();
+            };
+        };
 
-     var followHref = function () {
-        window.location.href = $('#orderTag').attr("href");
-     };
+        var followHref = function () {
+            window.location.href = $('#orderTag').attr("href");
+        };
 
-     var socket = io.connect("/", {
-         "reconnect": true,
-         "reconnection delay": 500,
-         "max reconnection attempts": 10
-     });
+        var socket = io.connect("/", {
+            "reconnect": true,
+            "reconnection delay": 500,
+            "max reconnection attempts": 10
+        });
 
-     socket.on("connect", function (data) {
-         socket.emit("message", "Connected - " + (new Date()).toString());
-     });
+        socket.on("connect", function (data) {
+            socket.emit("message", "Connected - " + (new Date()).toString());
+        });
 
-     var nextAPI = function () {
-         $.ajax("./api/" + currentCount)
-             .done(function (data) {
-                 var ASAP = 'Yes';
-                 var AllowDelivery = 'Yes';
+        var nextAPI = function () {
+            $.ajax("./api/" + currentCount)
+                .done(function (data) {
+                    var ASAP = 'Yes';
+                    var AllowDelivery = 'Yes';
 
-                 // Can you get food ASAP
-                 if (data.allow_asap == 1) {
-                     ASAP = 'Yes';
-                 } else {
-                     ASAP = 'No';
-                 }
+                    // Can you get food ASAP
+                    if (data.allow_asap == 1) {
+                        ASAP = 'Yes';
+                    } else {
+                        ASAP = 'No';
+                    }
 
-                 // Can you deliver food ASAP
-                 if (data.is_delivering == 1) {
-                     AllowDelivery = 'Yes';
-                 } else {
-                     AllowDelivery = 'No';
-                 }
+                    // Can you deliver food ASAP
+                    if (data.is_delivering == 1) {
+                        AllowDelivery = 'Yes';
+                    } else {
+                        AllowDelivery = 'No';
+                    }
 
-                 $('#tochangehere').html(data.na);
-                 $('#tochangehere2').html(data.addr);
-                 $('#orderTag').attr("href", "order/" + currentCount);
-             });
-     };
+                    $('#tochangehere').html(data.na);
+                    $('#tochangehere2').html(data.addr);
+                    $('#orderTag').attr("href", "order/" + currentCount);
+                });
+        };
 
-     socket.on("message", function (data) {
-         if (data === 1) {
-             console.log(data);
-             goNext();
-         } else if (data === 3) {
-             console.log(data);
-             goPrevious();
-         } else if (data === 2) {
-             console.log(data);
-             $('#orderTag').click();
-         }
-     });
+        socket.on("message", function (data) {
+            if (data === 1) {
+                console.log(data);
+                goNext();
+            } else if (data === 3) {
+                console.log(data);
+                goPrevious();
+            } else if (data === 2) {
+                console.log(data);
+                $('#orderTag').click();
+            }
+        });
 
-     (function () {
-         currentCount = 0;
-         nextAPI();
-     })();
-  </script>
-  </body>
+        (function () {
+            currentCount = 0;
+            nextAPI();
+        })();
+    </script>
+</body>
 </html>
