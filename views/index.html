@@ -21,30 +21,27 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="./javascript/jquery.js"></script>
+    <script src="./javascript/bootstrap.min.js"></script>
+    <script src="./javascript/docs.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false">
+    </script>
+    <script src="./javascript/jquery.googlemap.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#">Scan Card</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" id="carousel-inner">
             <div class="item active">
                 <div class="container">
                     <div class="carousel-caption">
+                        <center>
+                            <div id="map" style="width: 300px; height: 300px;"></div>
+                        </center>
                         <h1 id="tochangehere"></h1>
                         <p id="tochangehere2"></p>
-                        <p><a class="btn btn-lg btn-primary" id="orderTag" href="order/0" role="button" onclick="followHref()">Order</a>
+                        <p><a class="btn btn-lg btn-primary" id="orderTag" href="order/0" role="button" onclick="followHref()">View</a>
                         </p>
                     </div>
                 </div>
@@ -53,12 +50,7 @@
         <a class="left carousel-control" onclick="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>
         <a class="right carousel-control" onclick="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></a>
     </div>
-
     </div>
-
-    <script src="/javascript/jquery.js"></script>
-    <script src="./javascript/bootstrap.min.js"></script>
-    <script src="./javascript/docs.min.js"></script>
     <script type="text/javascript">
         var currentCount = 0;
         var goNext = function () {
@@ -75,6 +67,16 @@
 
         var followHref = function () {
             window.location.href = $('#orderTag').attr("href");
+        };
+
+        var refreshMap = function (addend) {
+            $("#map").googleMap();
+            $("#map").addWay({
+                start: "251 Mercer St, New York, NY, 10009", // Postal address for the start marker (obligatory)
+                end: addend, // Postal Address or GPS coordinates for the end marker (obligatory)
+                route: 'way', // Block's ID for the route display (optional)
+                langage: 'english' // language of the route detail (optional)
+            })
         };
 
         var socket = io.connect("/", {
@@ -109,7 +111,8 @@
 
                     $('#tochangehere').html(data.na);
                     $('#tochangehere2').html(data.addr);
-                    $('#orderTag').attr("href", "order/" + currentCount);
+                    $('#orderTag').attr("href", "eat/" + data['id']);
+                    refreshMap(data.addr);
                 });
         };
 
@@ -131,5 +134,18 @@
             nextAPI();
         })();
     </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#map").googleMap();
+            $("#map").addWay({
+                start: "251 Mercer St, New York, NY, 10009", // Postal address for the start marker (obligatory)
+                end: "111 Macdougal St, New York, NY", // Postal Address or GPS coordinates for the end marker (obligatory)
+                route: 'way', // Block's ID for the route display (optional)
+                langage: 'english', // language of the route detail (optional)
+                id: 'marker1' // Unique ID for your marker
+            });
+        })
+    </script>
 </body>
+
 </html>

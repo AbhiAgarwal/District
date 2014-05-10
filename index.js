@@ -45,6 +45,17 @@ app.get('/order/:id', function(req, res) {
     res.json(currentFood[req.params.id]);
 });
 
+app.get('/eat/:id', function(req, res) {
+    res.render('eat.html');
+});
+
+app.get('/restaurants/:id', function(req, res) {
+    ordrin_api.restaurant_details({
+        rid: req.params.id
+    }, function(data, x){
+        res.json(x);
+    });
+});
 
 app.get('/', function(req, res) {
     res.render('index.html');

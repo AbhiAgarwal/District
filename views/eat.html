@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="District">
+    <meta name="author" content="Abhi Agarwal">
+    <link rel="shortcut icon" href="./ico/favicon.ico">
+    <title>District</title>
+
+    <link href="../stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="../stylesheets/carousel.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../javascript/jquery.js"></script>
+    <script src="../javascript/bootstrap.min.js"></script>
+    <script src="../javascript/docs.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false">
+    </script>
+    <script src="../javascript/jquery.googlemap.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" id="carousel-inner">
+            <div class="item active">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <center>
+                            <div id="map" style="width: 300px; height: 300px;"></div>
+                        </center>
+                        <h1 id="tochangehere"></h1>
+                        <p id="tochangehere2"></p>
+                        <p><a class="btn btn-lg btn-primary" id="orderTag" href="order/0" role="button" onclick="followHref()">Reserve</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+        var currentCount = 0;
+        var currentPosition = window.location.pathname.split( '/' )[2];
+
+        var addMap = function(addr){
+            $("#map").googleMap();
+            $("#map").addWay({
+                start: "251 Mercer St, New York, NY, 10009", // Postal address for the start marker (obligatory)
+                end: addr, // Postal Address or GPS coordinates for the end marker (obligatory)
+                route: 'way', // Block's ID for the route display (optional)
+                langage: 'english', // language of the route detail (optional)
+                id: 'marker1' // Unique ID for your marker
+            });
+        };
+
+        var socket = io.connect("/", {
+            "reconnect": true,
+            "reconnection delay": 500,
+            "max reconnection attempts": 10
+        });
+
+        var goback = function () {
+            window.location.href = '../';
+        };
+
+        socket.on("connect", function (data) {
+            socket.emit("message", "Connected - " + (new Date()).toString());
+        });
+
+        socket.on("message", function (data) {
+            if (data === 1) {
+                console.log(data);
+            } else if (data === 3) {
+                goback();
+            } else if (data === 2) {
+                console.log(data);
+            }
+        });
+
+        var api = function () {
+            $.ajax("../restaurants/" + currentPosition)
+                .done(function (data) {
+                    console.log(data);
+                    $('#tochangehere').html(data.name);
+                });
+        };
+
+        (function () {
+            currentCount = 0;
+            api();
+        })();
+    </script>
+    <script type="text/javascript">
+
+    </script>
+</body>
+
+</html>
