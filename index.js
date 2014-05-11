@@ -46,19 +46,19 @@ app.get('/order/:id', function(req, res) {
 });
 
 app.get('/eat/:id', function(req, res) {
-    res.render('eat.html');
+    res.render('eat2.html');
 });
 
 app.get('/restaurants/:id', function(req, res) {
     ordrin_api.restaurant_details({
         rid: req.params.id
-    }, function(data, x){
+    }, function(data, x) {
         res.json(x);
     });
 });
 
 app.get('/', function(req, res) {
-    res.render('index.html');
+    res.render('index2.html');
 });
 
 var server = http.createServer(app);

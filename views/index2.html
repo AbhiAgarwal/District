@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>District</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="./stylesheets/food.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+          <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body>
+    <div class="navbar navbar-custom navbar-fixed-top">
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>&nbsp;</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="map-canvas"></div>
+    <div class="container-fluid" id="main">
+        <div class="row">
+            <div class="col-xs-8" id="left">
+                <center><h2 id="tochangehere"></h2></center>
+                <p id="addressInformation"></p>
+                <hr>
+                <p>
+                    <a href="eat/0" onclick="followHref()" id="orderTag" class="center-block btn btn-primary">View Restaurant</a>
+                </p>
+                <hr>
+            </div>
+            <div class="col-xs-4">
+            </div>
+        </div>
+    </div>
+
+    <script src="../javascript/jquery.js"></script>
+    <script src="../javascript/bootstrap.min.js"></script>
+    <script src="../javascript/docs.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false">
+    </script>
+    <script src="../javascript/jquery.googlemap.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script type='text/javascript'>
+        var currentCount = 0;
+
+        var goNext = function () {
+            currentCount++;
+            nextAPI();
+        };
+
+        var goPrevious = function () {
+            if (currentCount >= 0) {
+                currentCount--;
+                nextAPI();
+            };
+        };
+
+        var addMap = function (lat, longi) {
+            var latlng = new google.maps.LatLng(lat, longi);
+            var mapOptions = {
+                center: latlng,
+                scrollWheel: false,
+                zoom: 13
+            };
+
+            var marker = new google.maps.Marker({
+                position: latlng,
+                url: '/',
+                animation: google.maps.Animation.DROP
+            });
+
+            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            marker.setMap(map);
+        };
+
+        var socket = io.connect("/", {
+            "reconnect": true,
+            "reconnection delay": 500,
+            "max reconnection attempts": 10
+        });
+
+        socket.on("connect", function (data) {
+            socket.emit("message", "Connected - " + (new Date()).toString());
+        });
+
+        var followHref = function () {
+            window.location.href = $('#orderTag').attr("href");
+        };
+
+        var nextAPI = function () {
+            $.ajax("./api/" + currentCount)
+                .done(function (data) {
+                    console.log(data);
+                    var ASAP = 'Yes';
+                    var AllowDelivery = 'Yes';
+
+                    // Can you get food ASAP
+                    if (data.allow_asap == 1) {
+                        ASAP = 'Yes';
+                    } else {
+                        ASAP = 'No';
+                    }
+
+                    // Can you deliver food ASAP
+                    if (data.is_delivering == 1) {
+                        AllowDelivery = 'Yes';
+                    } else {
+                        AllowDelivery = 'No';
+                    }
+
+                    var knownFor = "";
+                    for(var a in data['cu']){
+                        knownFor += (data['cu'][a]) + " ";
+                    }
+
+                    addMap(data.latitude, data.longitude);
+                    $('#orderTag').attr("href", "eat/" + data['id']);
+                    $('#addressInformation').html(
+
+                        "<h4>Location </h4>" + data['full_addr']['addr'] + "<br>" +
+                        "<h4>Known For </h4> " + knownFor
+                    );
+
+                    $('#tochangehere').html(data.na);
+                });
+        };
+
+        socket.on("message", function (data) {
+            if (data === 1) {
+                console.log(data);
+                goNext();
+            } else if (data === 3) {
+                console.log(data);
+                goPrevious();
+            } else if (data === 2) {
+                console.log(data);
+                $('#orderTag').click();
+            }
+        });
+
+        (function(){
+            currentCount = 0;
+            nextAPI();
+        })();
+
+    </script>
+
+</body>
+
+</html>
