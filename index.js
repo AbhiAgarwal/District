@@ -46,7 +46,7 @@ app.get('/order/:id', function(req, res) {
 });
 
 app.get('/eat/:id', function(req, res) {
-    res.render('eat2.html');
+    res.render('eat.html');
 });
 
 app.get('/restaurants/:id', function(req, res) {
@@ -58,7 +58,7 @@ app.get('/restaurants/:id', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-    res.render('index2.html');
+    res.render('index.html');
 });
 
 var server = http.createServer(app);
