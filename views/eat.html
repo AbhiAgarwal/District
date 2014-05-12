@@ -76,10 +76,12 @@
                     console.log(data);
 
                     for(var i in data["menu"]){
-                        menuInformation += ("<h3>" + data["menu"][i]["name"] + "</h3>");
-                        menuInformation += "<p>";
-                        menuInformation += data["menu"][i]["children"][0]["descrip"] + " ";
-                        menuInformation += "</p>";
+                        if(i < 6){
+                            menuInformation += ("<h3>" + data["menu"][i]["name"] + "</h3>");
+                            menuInformation += "<p>";
+                            menuInformation += data["menu"][i]["children"][0]["descrip"] + " ";
+                            menuInformation += "</p>";
+                        }
                     }
 
                     $('#tochangehere').html(data.name);
@@ -87,6 +89,30 @@
                     addMap(data.latitude, data.longitude);
                 });
         };
+        var socket = io.connect("/", {
+            "reconnect": true,
+            "reconnection delay": 500,
+            "max reconnection attempts": 10
+        });
+
+        socket.on("connect", function (data) {
+            socket.emit("message", "Connected - " + (new Date()).toString());
+        });
+        socket.on("message", function (data) {
+            if (data === 1) {
+                console.log(data);
+                $("html, body").animate({ scrollTop: $(window).height()}, 600);
+            } else if (data === 3) {
+                console.log(data);
+                window.location.href = "../";
+            } else if (data === 2) {
+                console.log(data);
+                $('#tochangehere').html('<div class="alert alert-success">Seating reserved! Redirecting back :)</div>');
+                setTimeout(function(){
+                    window.location.href = "../";
+                }, 1500);
+            }
+        });
         $(document).ready(function () {
             api();
 
